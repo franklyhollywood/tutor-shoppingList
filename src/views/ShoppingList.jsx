@@ -6,20 +6,61 @@ import { useReducer } from 'react';
 
 export function ShoppingList() {
   const reducer = (oldState, action) => {
+    let returnState = [...oldState];
     switch (action.type) {
       case 'add':
         // old list = the new item added
-        return [...oldState, { name: action.itemName, id: action.id }];
-        break;
+        return [
+          ...oldState,
+          { name: action.itemName, id: action.id, done: false, editing: false },
+        ];
       case 'edit':
-        return [];
-        break;
+        return oldState.map((item) => {
+          if (item.id === action.id) {
+            item.editing = true;
+          }
+          return item;
+        });
+      // alternatively
+      // let newState = oldState;
+      // for (let i = 0; i < oldState.length; i++) {
+      //   if (action.id === newState[i].id) {
+      //     newState[i].editing = true;
+      //   }
+      // }
       case 'delete':
-        break;
+        console.log('Inside reducer');
+        console.log('action.id = ', action.id);
+        let retValue = oldState.filter((item) => item.id !== action.id);
+        console.log(retValue);
+        return retValue;
       case 'save':
+        return oldState.map((i) => {
+          if (i.id === action.id) {
+            i.editing = false;
+            i.name = action.newName;
+          }
+          return i;
+        });
         break;
-      case 'checked':
-        break;
+      case 'toggleChecked':
+        console.log('onToggleChecked', action, returnState);
+        // for (let i = 0; i < returnState.length; i++) {
+        //   if (returnState[i].id === action.id) {
+        //     console.log('--Toggling----');
+        //     returnState[i].done = !returnState[i].done;
+        //   }
+        // }
+        // console.log('onToggleChecked', returnState);
+        let x = returnState.map((i) => {
+          if (i.id === action.id) {
+            console.log('Before: ', i);
+            i.done = !i.done;
+            console.log('after:', i);
+          }
+          return i;
+        });
+        return x;
     }
   };
 
@@ -27,14 +68,20 @@ export function ShoppingList() {
     {
       id: 1,
       name: 'apple',
+      done: false,
+      editing: false,
     },
     {
       id: 2,
       name: 'orange',
+      done: false,
+      editing: false,
     },
     {
       id: 3,
       name: 'soda',
+      done: false,
+      editing: false,
     },
   ];
 
@@ -48,8 +95,27 @@ export function ShoppingList() {
       type: 'add',
       id: new Date().valueOf(),
       itemName: document.getElementById('inputItem').value,
+      done: false,
     };
     dispatchFunction(theAction);
+  };
+
+  const handlers = {
+    onDeleted(itemID) {
+      dispatchFunction({
+        type: 'delete',
+        id: itemID,
+      });
+    },
+    onEdited(itemID) {
+      dispatchFunction({ type: 'edit', id: itemID });
+    }, //
+    onSaved(itemID, newName) {
+      dispatchFunction({ type: 'save', id: itemID, newName: newName });
+    },
+    onToggleChecked(itemID) {
+      dispatchFunction({ type: 'toggleChecked', id: itemID });
+    },
   };
 
   return (
@@ -58,7 +124,7 @@ export function ShoppingList() {
       <button id="addItemButton" onClick={handleAddItem}>
         Add
       </button>
-      <ItemsList itemList={shoppingListState} />
+      <ItemsList itemList={shoppingListState} handlers={handlers} />
     </>
   );
 }

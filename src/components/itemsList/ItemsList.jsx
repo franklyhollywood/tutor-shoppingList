@@ -5,7 +5,7 @@ export function ItemsList(props) {
   return (
     <div>
       {props.itemList.map((item) => (
-        <Item itemName={item.name} key={item.id} />
+        <Item key={item.id} item={item} handlers={props.handlers} />
       ))}
     </div>
   );
