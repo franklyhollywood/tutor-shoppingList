@@ -4,7 +4,7 @@ import './Item.css';
 
 export function Item(props) {
   const [itemName, setItemName] = useState(props.item.name);
-  //   const [checked, setChecked] = useState(props.item.done);
+  const [checked, setChecked] = useState(props.item.done);
 
   const handleChange = (e) => {
     setItemName(e.target.value);
@@ -17,14 +17,19 @@ export function Item(props) {
     <div>
       <input
         type="checkbox"
-        checked={props.item.done}
-        onChange={handleCheckboxChanged}
+        checked={checked}
+        onChange={(e) => {
+          e.preventDefault();
+          handleCheckboxChanged();
+          setChecked((oldState) => !oldState);
+        }}
       />
       {/* className={props.item.done ? 'isDone' : ''} */}
-      <span style={props.item.done ? { textDecoration: 'line-through' } : {}}>
+      <span style={checked ? { textDecoration: 'line-through' } : {}}>
         {itemName}
       </span>
       <button
+        aria-label={`edit${itemName}`}
         id="editItem"
         onClick={() => {
           props.handlers.onEdited(props.item.id);
@@ -33,6 +38,7 @@ export function Item(props) {
         Edit
       </button>
       <button
+        aria-label={`delete${itemName}`}
         id="deleteItem"
         onClick={() => {
           console.log('inside onclick of delete button.');
@@ -46,12 +52,14 @@ export function Item(props) {
   const whileEditing = (
     <div>
       <input
+        aria-label="editItem"
         type="text"
         value={itemName}
         id="newName"
         onChange={handleChange}
       />
       <input
+        aria-label={`save${itemName}`}
         type="button"
         id="saveButton"
         onClick={() => {

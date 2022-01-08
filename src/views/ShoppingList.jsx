@@ -21,16 +21,9 @@ export function ShoppingList() {
           }
           return item;
         });
-      // alternatively
-      // let newState = oldState;
-      // for (let i = 0; i < oldState.length; i++) {
-      //   if (action.id === newState[i].id) {
-      //     newState[i].editing = true;
-      //   }
-      // }
       case 'delete':
-        console.log('Inside reducer');
-        console.log('action.id = ', action.id);
+        // console.log('Inside reducer');
+        // console.log('action.id = ', action.id);
         let retValue = oldState.filter((item) => item.id !== action.id);
         console.log(retValue);
         return retValue;
@@ -44,23 +37,18 @@ export function ShoppingList() {
         });
         break;
       case 'toggleChecked':
-        console.log('onToggleChecked', action, returnState);
-        // for (let i = 0; i < returnState.length; i++) {
-        //   if (returnState[i].id === action.id) {
-        //     console.log('--Toggling----');
-        //     returnState[i].done = !returnState[i].done;
-        //   }
-        // }
-        // console.log('onToggleChecked', returnState);
-        let x = returnState.map((i) => {
+        // console.log('onToggleChecked', action, returnState);
+        return returnState.map((i) => {
           if (i.id === action.id) {
             console.log('Before: ', i);
             i.done = !i.done;
             console.log('after:', i);
           }
+          //   console.log(i);
           return i;
         });
-        return x;
+      // console.log(x);
+      // return x;
     }
   };
 
@@ -120,7 +108,7 @@ export function ShoppingList() {
 
   return (
     <>
-      <input name="inputItem" id="inputItem"></input>
+      <input aria-label="inputItem" name="inputItem" id="inputItem"></input>
       <button id="addItemButton" onClick={handleAddItem}>
         Add
       </button>
